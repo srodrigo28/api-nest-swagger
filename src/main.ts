@@ -12,7 +12,6 @@ async function bootstrap() {
 
   const configSwagger = new DocumentBuilder()
     .setDescription('API lista de Usuários')
-    .setBasePath('localhost:8080')
     .setTitle('Lista de Usuários')
     .setVersion('1.0')
     .build();

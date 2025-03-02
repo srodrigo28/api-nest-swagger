@@ -1,4 +1,4 @@
-#### Screens API Nest + Doc Swagger
+#### Screens API Nest + Doc Swagger Rev.4-Sketch
 
 <img src="./screens/api-print.png" alt="imagem api">
 
@@ -106,10 +106,31 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 ```
 
 #### 5:: Criando Generate a new CRUD resource Users
-* npx nest g res users
+```
+npx nest g res users
+```
 
 #### 6:: Configurando user conexao
-* user.module.ts
+* Não esquecer de implementar a conexão para o usuário
+```
+user.module.ts
+```
+
+* user.module.ts Modelo
+```
+import { Module } from '@nestjs/common';
+import { UsersService } from './users.service';
+import { UsersController } from './users.controller';
+import { PrismaModule } from 'src/prisma/prisma.module';
+
+@Module({
+  controllers: [UsersController],
+  providers: [UsersService],
+  imports: [PrismaModule]
+})
+
+export class UsersModule {}
+```
 
 #### 7:: Configurando DTOs users
 * instalando modulos para validar os DTOs
@@ -123,23 +144,16 @@ npm install class-validator@0.14
 
 * create-user.dto.ts
 ```
-import { IsEmail, IsNotEmpty, IsNumber, IsString, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator";
 
 export class CreateUserDto {
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(6)
+    @IsString() @IsNotEmpty() @MinLength(6)
     name: string;
 
-    @IsEmail()
-    
-    @MinLength(4)
-    @IsNotEmpty()
+    @IsEmail() @MinLength(4) @IsNotEmpty()
     email: string;
 
-    @IsString()
-    @MinLength(6)
-    @IsNotEmpty()
+    @IsString() @MinLength(6) @IsNotEmpty()
     password: string;
 }
 ```
@@ -230,7 +244,7 @@ export class UsersService {
     }
   }
 
-  async delete(id: number) {
+  async remove(id: number) {
     try{
       const user = await this.prisma.user.findFirst({
         where: { id: id }
@@ -249,38 +263,7 @@ export class UsersService {
 }
 ```
 
-#### 9:: Testando api
-
-##### Listando todos
-GET http://localhost:8080/users
-
-##### Listando um
-GET http://localhost:8080/users/3
-
-##### Apagando 
-DELETE http://localhost:8080/users/2
-
-##### Inserindo
-POST http://localhost:8080/users
-Content-Type: application/json
-
-{
-    "name": "Xiaomi X-3 pro",
-    "email": "admin@gmail.com",
-    "password": "123123"
-}
-
-##### Atualizando
-PATCH http://localhost:8080/users/1
-Content-Type: application/json
-
-{
-    "name": "Xiaomi X-3 pro 2 atualizado",
-    "email": "admin2_atualizado@gmail.com",
-    "password": "123123"
-}
-
-#### 10:: Documentando api com Swagger
+#### 9:: Documentando api com Swagger
 
 ```
 npm install --save @nestjs/swagger
@@ -292,7 +275,7 @@ npm install swagger-ui-express
 
 * config no main.ts
 ```
-  import { NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
@@ -318,7 +301,7 @@ async function bootstrap() {
     {whitelist: true, } // remove todos valores que passados a mais
   ))
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 8080);
 }
 bootstrap();
 ```
@@ -332,3 +315,36 @@ bootstrap();
     ]
   }
   ```
+
+#### 10:: Testando api Necessário plugin REST Client
+*  criando user.http e copiar
+```
+##### 1. Listando todos
+GET http://localhost:8080/users
+
+##### 2. Listando um
+GET http://localhost:8080/users/3
+
+##### 3. Apagando 
+DELETE http://localhost:8080/users/2
+
+##### 4. Inserindo
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+    "name": "Xiaomi X-3 pro",
+    "email": "admin@gmail.com",
+    "password": "123123"
+}
+
+##### 5. Atualizando
+PATCH http://localhost:8080/users/1
+Content-Type: application/json
+
+{
+    "name": "Xiaomi X-3 pro 2 atualizado",
+    "email": "admin2_atualizado@gmail.com",
+    "password": "123123"
+}
+```
